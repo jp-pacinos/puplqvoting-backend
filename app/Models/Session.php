@@ -68,6 +68,16 @@ class Session extends Model
     }
 
     /**
+     * checks if the registration is open
+     *
+     * @return bool
+     */
+    public function isRegistrationOpen()
+    {
+        return $this->registration_at != null;
+    }
+
+    /**
      * checks if the election is completed or ended.
      *
      * @return bool
