@@ -25,8 +25,8 @@ class Official extends Model
     public static function booted()
     {
         static::deleting(function ($official) {
-            if ($official->display_picture) {
-                Storage::disk('public')->delete($official->display_picture);
+            if ($official->getRawOriginal('display_picture')) {
+                Storage::disk('public')->delete($official->getRawOriginal('display_picture'));
             }
         });
     }
