@@ -27,6 +27,15 @@ class Session extends Model
         'cancelled_at',
     ];
 
+    public static function booted()
+    {
+        static::deleting(function ($session) {
+            $session->parties()->each(function ($party) {
+                $party->delete();
+            });
+        });
+    }
+
     public function parties()
     {
         return $this->hasMany('App\Models\Party');
