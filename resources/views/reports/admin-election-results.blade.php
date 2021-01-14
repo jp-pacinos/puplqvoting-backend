@@ -3,7 +3,7 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Election Results for 2021</title>
+    <title>Election Results for {{ $year }}</title>
 
     <style>
         @font-face {
@@ -176,178 +176,91 @@
 
     <div class="main">
         <div class="title-container">
-            <p class="title">Election Results for 2021</p>
+            <p class="title">Election Results for {{ $year }}</p>
             <p class="subtitle">Summary of votes</p>
         </div>
 
         <div class="candidates">
             <div class="position">
                 <table class="positions-table">
+                    @foreach ($summaryVotes as $officialsByPosition)
+                    @foreach ($officialsByPosition['officials'] as $official)
                     <tr>
                         <td>
-                            <p>PRESIDENT</p>
+                            <p>{{ $officialsByPosition['position'] }}</p>
                         </td>
                         <td>
                             <p class="position-votes">
-                                122390 votes
+                                {{ $official['votes'] }} votes
                             </p>
                         </td>
                         <td>
                             <p>
-                                Huel Demario Welch
-                                <span class="position-party">Party 1963</span>
+                                {{ $official['name'] }}
+                                <span class="position-party">{{ $official['party_name'] }}</span>
                             </p>
                         </td>
                     </tr>
-                    <tr>
-                        <td>
-                            <p>VICE PRESIDENT</p>
-                        </td>
-                        <td>
-                            <p class="position-votes">
-                                232 votes
-                            </p>
-                        </td>
-                        <td>
-                            <p>
-                                O'Kon Nyah
-                                <span class="position-party">Party 200</span>
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p>COUNCILOR</p>
-                        </td>
-                        <td>
-                            <p class="position-votes">
-                                593 votes
-                            </p>
-                        </td>
-                        <td>
-                            <p>
-                                O'Kon Nyah
-                                <span class="position-party">Party 200</span>
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p>COUNCILOR</p>
-                        </td>
-                        <td>
-                            <p class="position-votes">
-                                2390 votes
-                            </p>
-                        </td>
-                        <td>
-                            <p>
-                                O'Kon Nyah
-                                <span class="position-party">Party 200</span>
-                            </p>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td colspan="3">
-                            <p style="margin: 20px 0;">--- Nothing Follows ---</p>
-                        </td>
-                    </tr>
+                    @endforeach
+                    @endforeach
                 </table>
             </div>
         </div>
     </div>
 
     <div class="footer">
-        <p>Date Created: January 5, 2021, Tue 9:41 pm</p>
+        <p>Date Created: {{ $createdAt }}</p>
     </div>
 
     <div class="page-break"></div>
 
     <div class="main">
+        @foreach ($partiesVotes as $partyName => $officials)
         <div class="title-container">
-            <p class="title">Election Results for 2021</p>
+            <p class="title">Election Results for {{ $year }}</p>
             <p class="subtitle">Votes by Party</p>
         </div>
 
         <div class="party-group">
             <div>
-                <p class="party-title">Party 1</p>
+                <p class="party-title">{{ $partyName }}</p>
             </div>
+
+            @php $partyTotalVotes = 0; @endphp
+
             <div class="candidates">
                 <div class="position">
                     <table class="positions-table">
+                        @foreach ($officials as $official)
+
+                        @php $partyTotalVotes += $official['votes']; @endphp
+
                         <tr>
                             <td>
-                                <p>PRESIDENT</p>
+                                <p>{{ $official['position_name'] }}</p>
                             </td>
                             <td>
                                 <p class="position-votes">
-                                    122390 votes
+                                    {{ $official['votes'] }} votes
                                 </p>
                             </td>
                             <td>
                                 <p>
-                                    Huel Demario Welch
-                                    <span class="position-party">Party 1963</span>
+                                    {{ $official['name'] }}
+                                    <span class="position-party">{{ $partyName }}</span>
                                 </p>
                             </td>
                         </tr>
-                        <tr>
-                            <td>
-                                <p>VICE PRESIDENT</p>
-                            </td>
-                            <td>
-                                <p class="position-votes">
-                                    232 votes
-                                </p>
-                            </td>
-                            <td>
-                                <p>
-                                    O'Kon Nyah
-                                    <span class="position-party">Party 200</span>
-                                </p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <p>COUNCILOR</p>
-                            </td>
-                            <td>
-                                <p class="position-votes">
-                                    593 votes
-                                </p>
-                            </td>
-                            <td>
-                                <p>
-                                    O'Kon Nyah
-                                    <span class="position-party">Party 200</span>
-                                </p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <p>COUNCILOR</p>
-                            </td>
-                            <td>
-                                <p class="position-votes">
-                                    2390 votes
-                                </p>
-                            </td>
-                            <td>
-                                <p>
-                                    O'Kon Nyah
-                                    <span class="position-party">Party 200</span>
-                                </p>
-                            </td>
-                        </tr>
+
+                        @endforeach
+
                         <tr>
                             <td>
                                 <p style="margin: 20px 0;">TOTAL VOTES</p>
                             </td>
                             <td>
                                 <p class="position-votes" style="margin: 20px 0;">
-                                    2390 votes
+                                    {{ $partyTotalVotes }} votes
                                 </p>
                             </td>
                             <td>
@@ -363,110 +276,18 @@
                 </div>
             </div>
         </div>
+        @endforeach
 
-        <div class="party-group">
-            <div>
-                <p class="party-title">Party 2</p>
-            </div>
-            <div class="candidates">
-                <div class="position">
-                    <table class="positions-table">
-                        <tr>
-                            <td>
-                                <p>PRESIDENT</p>
-                            </td>
-                            <td>
-                                <p class="position-votes">
-                                    122390 votes
-                                </p>
-                            </td>
-                            <td>
-                                <p>
-                                    Huel Demario Welch
-                                    <span class="position-party">Party 1963</span>
-                                </p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <p>VICE PRESIDENT</p>
-                            </td>
-                            <td>
-                                <p class="position-votes">
-                                    232 votes
-                                </p>
-                            </td>
-                            <td>
-                                <p>
-                                    O'Kon Nyah
-                                    <span class="position-party">Party 200</span>
-                                </p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <p>COUNCILOR</p>
-                            </td>
-                            <td>
-                                <p class="position-votes">
-                                    593 votes
-                                </p>
-                            </td>
-                            <td>
-                                <p>
-                                    O'Kon Nyah
-                                    <span class="position-party">Party 200</span>
-                                </p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <p>COUNCILOR</p>
-                            </td>
-                            <td>
-                                <p class="position-votes">
-                                    2390 votes
-                                </p>
-                            </td>
-                            <td>
-                                <p>
-                                    O'Kon Nyah
-                                    <span class="position-party">Party 200</span>
-                                </p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <p style="margin: 20px 0;">TOTAL VOTES</p>
-                            </td>
-                            <td>
-                                <p class="position-votes" style="margin: 20px 0;">
-                                    2390 votes
-                                </p>
-                            </td>
-                            <td>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="3">
-                                <p style="margin: 20px 0;">--- Nothing Follows ---</p>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
+        <div class="footer">
+            <p>Date Created: {{ $createdAt }}</p>
         </div>
-    </div>
 
-    <div class="footer">
-        <p>Date Created: January 5, 2021, Tue 9:41 pm</p>
+        <div class="page-break"></div>
     </div>
-
-    <div class="page-break"></div>
 
     <div class="main">
         <div class="title-container">
-            <p class="title">Election Results for 2021</p>
+            <p class="title">Election Results for {{ $year }}</p>
             <p class="subtitle">Computation</p>
         </div>
 
@@ -476,48 +297,54 @@
             <table class="computation-table">
                 <tr>
                     <td>Student Registered</td>
-                    <td>2304</td>
+                    <td>{{ $basicStats['registeredCount'] }}</td>
                 </tr>
                 <tr>
                     <td>Student Voted</td>
-                    <td>2313</td>
+                    <td>{{ $basicStats['votedCount'] }}</td>
                 </tr>
                 <tr>
                     <td>Student Not Voted</td>
-                    <td>3</td>
+                    <td>{{ $basicStats['notVotedCount'] }}</td>
                 </tr>
                 <tr>
                     <td>Election Progress</td>
-                    <td>98.00%</td>
+                    <td>{{ $basicStats['progress'] }}%</td>
                 </tr>
 
             </table>
         </div>
 
         <div class="computation">
+            @php $totalVotes = $basicStats['registeredCount'] * $candidatesCountByParty; @endphp
+
             <p class="computation-title">Total votes for every party</p>
-            <p class="subtitle" style="margin-bottom: 10px; font-size: 0.9em">2304 Students * 16 Candidates per party =
-                36,864 votes</p>
+            <p class="subtitle" style="margin-bottom: 10px; font-size: 0.9em">
+                {{ $basicStats['registeredCount'] }} Students * {{ $candidatesCountByParty }} Candidates per party =
+                {{ $totalVotes }} votes
+            </p>
 
             <table class="computation-table">
+                @php $partiesTotalVotes = 0; @endphp
+
+                @foreach ($totalCountByParty as $partyName => $count)
+                @php $partiesTotalVotes += $count @endphp
                 <tr>
-                    <td>Pary 1 </td>
-                    <td>20230</td>
+                    <td>{{ $partyName }}</td>
+                    <td>{{ $count }} votes</td>
                 </tr>
-                <tr>
-                    <td>Party 2</td>
-                    <td>16634</td>
-                </tr>
+                @endforeach
+
                 <tr>
                     <td>Total votes</td>
-                    <td>36,864</td>
+                    <td>{{ $partiesTotalVotes }} votes</td>
                 </tr>
             </table>
         </div>
     </div>
 
     <div class="footer">
-        <p>Date Created: January 5, 2021, Tue 9:41 pm</p>
+        <p>Date Created: {{ $createdAt }}</p>
     </div>
 </body>
 

@@ -55,15 +55,19 @@ trait HasStudentVotes
         ])
             ->fromSub(function ($query) use ($detailed) {
                 $query
-                    ->select(['officials.id', 'officials.position_id', 'officials.student_id', 'officials.party_id'])
+                    ->select([
+                        'officials.id', 'officials.position_id', 'officials.student_id', 'officials.party_id',
+                    ])
                     ->from('officials')
                     ->when($detailed, function ($q) {
-                        return $q->join('user_students', 'user_students.id', '=', 'officials.student_id')->addSelect([
-                            'user_students.lastname',
-                            'user_students.firstname',
-                            'user_students.middlename',
-                            'user_students.suffix',
-                        ]);
+                        return $q
+                            ->join('user_students', 'user_students.id', '=', 'officials.student_id')
+                            ->addSelect([
+                                'user_students.lastname',
+                                'user_students.firstname',
+                                'user_students.middlename',
+                                'user_students.suffix',
+                            ]);
                     });
             }, 'officials')
             ->leftJoinSub($studentVotes, 'student_votes', function ($join) {
@@ -91,8 +95,11 @@ trait HasStudentVotes
                 return $query->where('student_votes.sex', '=', $options['gender']);
             })
             ->groupBy('officials.id')
-            ->orderBy('officials.position_id')
-            ->orderBy('officials.party_id')
+            ->when($options['sortByVotes'] ?? null, function ($query) use ($options) {
+                return $query->orderBy('votes', $options['sortByVotes'] == 'desc' ? 'desc' : 'asc');
+            }, function ($query) {
+                return $query->orderBy('officials.position_id')->orderBy('officials.party_id');
+            })
             ->get();
     }
 }
