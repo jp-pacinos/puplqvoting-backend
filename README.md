@@ -7,6 +7,7 @@
 -   Rename `.env.example` to `.env`
 -   Configure `.env`, database, url, appname
 -   `php artisan key:generate`
+-   `php artisan storage:link`
 -   `php artisan migrate:fresh --seed` we make sure this is the first time
 -   `php artisan serve` to start the app
 
