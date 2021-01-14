@@ -29,7 +29,7 @@ Route::prefix('vote')->name('vote.')->group(function () {
 });
 
 Route::prefix('pupadmin')->group(function () {
-    Route::get('/reports/election/{session}', [ElectionResultsController::class, 'index']);
+    Route::get('/reports/election/{session}', [ElectionResultsController::class, 'index'])->name('reports.election');
 
     Route::get('/{view?}', [AdminHomeController::class, 'index'])->where('view', '^((?!api).)*');
 });

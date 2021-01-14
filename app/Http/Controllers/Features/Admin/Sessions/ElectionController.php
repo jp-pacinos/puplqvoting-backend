@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Features\Admin\Sessions;
 use App\Models\Party;
 use App\Models\Session;
 use App\Models\Official;
+use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 
 class ElectionController extends Controller
@@ -38,6 +39,9 @@ class ElectionController extends Controller
             'stats' => [
                 'basic' => $this->basicStats($session),
                 'votes' => $this->studentVoteStats($session, ['partyIds' => $partyIds]),
+            ],
+            'reports' => [
+                'election' => URL::signedRoute('reports.election', ['session' => $session->id]),
             ],
         ]);
     }
