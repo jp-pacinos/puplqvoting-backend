@@ -247,7 +247,7 @@
                             <td>
                                 <p>
                                     {{ $official['name'] }}
-                                    <span class="position-party">{{ $partyName }}</span>
+                                    {{-- <span class="position-party">{{ $partyName }}</span> --}}
                                 </p>
                             </td>
                         </tr>
