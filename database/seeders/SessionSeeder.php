@@ -17,6 +17,26 @@ class SessionSeeder extends Seeder
     {
         $faker = \Faker\Factory::create();
 
+        $thisYear = now()->year;
+        $fromYear = $thisYear - 12;
+
+        for ($i = $fromYear; $i < $thisYear; $i++) {
+            if ($i == 2020 || $i === 2019 || $i == 2018) {
+                continue;
+            }
+
+            Session::create([
+                'name' => 'Election '.$i,
+                'year' => $i,
+                'active' => false,
+                'description' => \rand(0, 100) > 60 ? $faker->text : null,
+                'registration' => \rand(0, 100) > 40 ? true : false,
+                'verification_type' => $this->randomVerificationType(),
+                'cancelled_at' => \rand(0, 100) <= 5 ? now() : null,
+                'completed_at' => \rand(0, 100) >= 10 ? now() : null,
+            ]);
+        }
+
         Session::create([
             'name' => 'Covid Season',
             'year' => 2020,
@@ -56,6 +76,20 @@ class SessionSeeder extends Seeder
             'verification_type' => 'open',
             'cancelled_at' => Carbon::now(),
         ]);
+    }
 
+    private function randomVerificationType()
+    {
+        $n = \rand(0, 100);
+
+        if ($n >= 90) {
+            return 'open';
+        }
+
+        if ($n >= 60) {
+            return 'email';
+        }
+
+        return 'code';
     }
 }
