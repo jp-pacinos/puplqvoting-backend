@@ -78,15 +78,15 @@
     'normal' => $rootDir . '/lib/fonts/DejaVuSerif',
   ),
   'opensans' => array(
-    'normal' => $fontDir . '/opensans_normal_a95be47902a191fbcb7185557057a2ba',
+    'normal' => $fontDir . '/opensans_normal_b184d70ffab5d0e0bbf198a3ab256672',
   ),
   'opensans bold' => array(
     'normal' => $fontDir . '/opensans_bold_normal_42e8d5f1d5ac2e4fdeb07f3d4fba9448',
   ),
   'opensans semibold' => array(
-    'normal' => $fontDir . '/opensans_semibold_normal_4114088d3d0d7c462e01bbfc7a1c8c8d',
+    'normal' => $fontDir . '/opensans_semibold_normal_432d5026c68055882d90f6bdb11c050e',
   ),
   'opensans light' => array(
-    'normal' => $fontDir . '/opensans_light_normal_cfce0c76a8a388a5dce826507520d01f',
+    'normal' => $fontDir . '/opensans_light_normal_ebb01226eefde9e7b75cef910f0444cc',
   ),
 ) ?>
