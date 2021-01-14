@@ -311,18 +311,22 @@
                     <td>Election Progress</td>
                     <td>{{ $basicStats['progress'] }}%</td>
                 </tr>
-
             </table>
         </div>
 
         <div class="computation">
-            @php $totalVotes = $basicStats['registeredCount'] * $candidatesCountByParty; @endphp
-
             <p class="computation-title">Total votes for every party</p>
             <p class="subtitle" style="margin-bottom: 10px; font-size: 0.9em">
-                {{ $basicStats['registeredCount'] }} Students * {{ $candidatesCountByParty }} Candidates per party =
-                {{ $totalVotes }} votes
+                {{ $basicStats['votedCount'] }} Students voted * {{ $candidatesCountByParty }} Candidates per party =
+                {{ $basicStats['votedCount'] * $candidatesCountByParty }} votes
             </p>
+            @if ($basicStats['notVotedCount'] > 0)
+            <p class="subtitle" style="margin-bottom: 10px; font-size: 0.9em">
+                {{ $basicStats['notVotedCount'] }} Students not voted * {{ $candidatesCountByParty }} Candidates per
+                party =
+                {{ $basicStats['notVotedCount'] * $candidatesCountByParty }} votes left
+            </p>
+            @endif
 
             <table class="computation-table">
                 @php $partiesTotalVotes = 0; @endphp
