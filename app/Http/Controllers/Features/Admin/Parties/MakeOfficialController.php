@@ -46,6 +46,8 @@ class MakeOfficialController extends Controller
             abort(403, 'The official you want to remove may not exist or from other party.');
         }
 
+        $this->makeSureOfficialCanBeDeleted($party);
+
         if ($official->getRawOriginal('display_picture')) {
             Storage::disk('public')->delete($official->getRawOriginal('display_picture'));
         }
@@ -83,5 +85,23 @@ class MakeOfficialController extends Controller
             ->mapWithKeys(function ($position) {
                 return [$position->id => $position->per_party_count];
             });
+    }
+
+    private function makeSureOfficialCanBeDeleted($party)
+    {
+        if ($party->session->isOpen()) {
+            $message = 'Please stop the election first. Please be aware that it make breaking changes.';
+            \abort(403, $message);
+        }
+
+        if ($party->session->isRegistrationOpen()) {
+            $message = 'Please stop the registration first. Please be aware that it make breaking changes.';
+            \abort(403, $message);
+        }
+
+        if ($party->session->isEnded()) {
+            $message = 'You cannot remove officials if the election is ended. It will cause breaking changes.';
+            \abort(403, $message);
+        }
     }
 }
