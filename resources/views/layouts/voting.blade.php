@@ -108,6 +108,7 @@
             }
         }
     </style>
+    @stack('head')
 </head>
 
 <body class="antialiased">
@@ -129,6 +130,8 @@
             @yield('content')
         </div>
     </main>
+
+    @stack('scripts')
 </body>
 
 </html>
