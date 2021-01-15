@@ -19,7 +19,7 @@ class RegistrationOpen
     {
         $session = (new StudentActiveSession())->getInstance();
 
-        if (! $session->isRegistrationOpen()) {
+        if (! $session || ! $session->isRegistrationOpen()) {
             abort(403, 'Registration is not yet started.');
         }
 
