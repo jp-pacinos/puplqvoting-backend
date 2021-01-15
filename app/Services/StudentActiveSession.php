@@ -33,6 +33,11 @@ class StudentActiveSession
         return Cache::forget(static::$cacheKey);
     }
 
+    public static function setActive(Session $session)
+    {
+        Cache::put(static::$cacheKey, $session, config('cache.stored-expiry'));
+    }
+
     private static function instance()
     {
         static $session;
