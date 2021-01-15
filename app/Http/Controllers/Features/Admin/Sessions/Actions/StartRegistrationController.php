@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Features\Admin\Sessions\Actions;
 
 use App\Models\Session;
 use App\Http\Controllers\Controller;
+use App\Services\StudentActiveSession;
 
 class StartRegistrationController extends Controller
 {
@@ -22,6 +23,8 @@ class StartRegistrationController extends Controller
 
         $session->registration_at = \now();
         $session->save();
+
+        StudentActiveSession::setActive($session);
 
         return \response()->json([
             'message' => 'Registration started.',

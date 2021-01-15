@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Features\Admin\Sessions\Actions;
 
 use App\Models\Session;
 use App\Http\Controllers\Controller;
+use App\Services\StudentActiveSession;
 
 class StartElectionController extends Controller
 {
@@ -21,6 +22,8 @@ class StartElectionController extends Controller
         }
 
         $session->update(['started_at' => now()]);
+
+        StudentActiveSession::setActive($session);
 
         return \response()->json([
             'message' => 'Election started.',
