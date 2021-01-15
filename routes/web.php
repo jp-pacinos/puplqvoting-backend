@@ -7,6 +7,7 @@ use App\Http\Controllers\Features\Student\Voting\StudentEmailVerifiedController;
 use App\Http\Controllers\Features\Admin\App\HomeController as AdminHomeController;
 use App\Http\Controllers\Features\Student\App\HomeController as StudentHomeController;
 use App\Http\Controllers\Features\Student\App\RegistrationController as StudentRegistrationController;
+use App\Http\Controllers\Features\Student\App\RegistrationShowCodeController as StudentRegistrationShowCodeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,5 +47,8 @@ Route::middleware('registration.open')->group(function () {
     Route::get('/registration', [StudentRegistrationController::class, 'index'])->name('student.registration');
     Route::post('/registration', [StudentRegistrationController::class, 'store']);
 });
+
+Route::get('/registration/code/{code}', [StudentRegistrationShowCodeController::class, 'index'])
+    ->name('student.registration.code');
 
 Route::get('/{view?}', [StudentHomeController::class, 'index'])->where('view', '^((?!api).)*');
