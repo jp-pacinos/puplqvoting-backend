@@ -61,7 +61,7 @@ class ElectionResultsController extends Controller
         });
 
         foreach ($positions as $position) {
-            if (\is_null($votesByPositions[$position->id]) ?? null) {
+            if (\is_null($votesByPositions[$position->id] ?? null)) {
                 continue;
             }
             $candidatesByParty += $position->choose_max_count;
