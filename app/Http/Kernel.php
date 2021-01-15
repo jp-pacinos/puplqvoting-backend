@@ -73,6 +73,7 @@ class Kernel extends HttpKernel
         'cache.flush' => \App\Http\Middleware\FlushCache::class,
         'sanctum.token' => \App\Http\Middleware\SanctumTokenCan::class,
         'voting.open' => \App\Http\Middleware\VotingOpen::class,
+        'registration.open' => \App\Http\Middleware\RegistrationOpen::class,
         'session.verification' => \App\Http\Middleware\ValidSessionVerificationType::class,
     ];
 }

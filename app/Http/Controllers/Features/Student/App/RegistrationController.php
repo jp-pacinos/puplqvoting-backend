@@ -12,7 +12,7 @@ class RegistrationController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('voting.open');
+        $this->middleware('registration.open');
     }
 
     public function index()

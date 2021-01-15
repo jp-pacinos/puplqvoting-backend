@@ -42,7 +42,7 @@ Route::prefix('pupadmin')->group(function () {
  * student routes
  */
 
-Route::middleware('voting.open')->group(function () {
+Route::middleware('registration.open')->group(function () {
     Route::get('/registration', [StudentRegistrationController::class, 'index'])->name('student.registration');
     Route::post('/registration', [StudentRegistrationController::class, 'store']);
 });
