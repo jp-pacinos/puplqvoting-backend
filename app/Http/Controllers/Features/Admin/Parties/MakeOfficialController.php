@@ -17,6 +17,8 @@ class MakeOfficialController extends Controller
             'student_id' => 'required|numeric|exists:user_students,id',
         ]);
 
+        $this->validateElectionNotEnded($party);
+
         // dahil foreign key ang position_id sa officials table
         // hindi pweding mag assign ng null value, except kung mag assign nalang ng value
         $openPositionId = $this->getOpenPositionId($party);
@@ -46,7 +48,7 @@ class MakeOfficialController extends Controller
             abort(403, 'The official you want to remove may not exist or from other party.');
         }
 
-        $this->makeSureOfficialCanBeDeleted($party);
+        $this->validateElectionNotEnded($party);
 
         if ($official->getRawOriginal('display_picture')) {
             Storage::disk('public')->delete($official->getRawOriginal('display_picture'));
@@ -87,7 +89,7 @@ class MakeOfficialController extends Controller
             });
     }
 
-    private function makeSureOfficialCanBeDeleted($party)
+    private function validateElectionNotEnded($party)
     {
         if ($party->session->isOpen()) {
             $message = 'Please stop the election first. Please be aware that it make breaking changes.';
@@ -100,7 +102,7 @@ class MakeOfficialController extends Controller
         }
 
         if ($party->session->isEnded()) {
-            $message = 'You cannot remove officials if the election is ended. It will cause breaking changes.';
+            $message = 'You cannot add/remove officials if the election is ended. It will cause breaking changes.';
             \abort(403, $message);
         }
     }
