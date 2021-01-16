@@ -23,7 +23,7 @@ class StudentCodeSubmitController extends Controller
 
         $student = $request->user();
 
-        if (! $student->isValidConfirmationKey($request->code, $history->session->id)) {
+        if (! $student->isValidConfirmationKey($request->code, $history->session_id)) {
             abort(403, 'The confirmation code is invalid.');
         }
 
