@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Features\Student\Voting;
 
 use App\Models\Party;
 use App\Models\Official;
-use App\Models\Position;
 use App\Http\Controllers\Controller;
 use App\Services\StudentActiveSession;
 use App\Http\Requests\ValidOfficials as ValidOfficialsRequest;
@@ -30,12 +29,20 @@ class VotingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Position $position, Party $party, Official $official)
+    public function index(Party $party, Official $official)
     {
+        $candidates = $this->getOfficials($official, $this->session->id);
+
+        // return response()->json([
+        //     'positions' => $this->getPositions($position, $this->session->id),
+        //     'parties' => $this->getParties($party, $this->session->id),
+        //     'candidates' => $this->getOfficials($official, $this->session->id),
+        // ]);
+
         return response()->json([
-            'positions' => $this->getPositions($position, $this->session->id),
+            'positions' => $this->getAvailablePositions($candidates),
             'parties' => $this->getParties($party, $this->session->id),
-            'candidates' => $this->getOfficials($official, $this->session->id),
+            'candidates' => $candidates,
         ]);
     }
 

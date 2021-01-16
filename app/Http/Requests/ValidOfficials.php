@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Position;
+use App\Models\Official;
 use App\Rules\OfficialsGroup;
 use Illuminate\Support\Facades\Cache;
 use App\Services\StudentActiveSession;
@@ -36,19 +36,25 @@ class ValidOfficials extends FormRequest
             'StudentCanVote\getRules()',
             config('cache.stored-expiry'),
             function () {
-                $sessionId = (new StudentActiveSession())->id();
-                $positions = (new Position())->select(['id', 'choose_max_count as maxCount'])->get();
+                $session = (new StudentActiveSession())->getInstance();
 
-                $rules = $positions->mapWithKeys(function ($position) use ($sessionId) {
+                // $positions = (new Position())->select(['id', 'choose_max_count'])->get();
+                $positions = Official::select(['positions.id', 'positions.choose_max_count'])
+                    ->whereIn('officials.party_id', $session->parties->modelKeys())
+                    ->join('positions', 'positions.id', '=', 'officials.position_id')
+                    ->distinct()
+                    ->get();
+
+                $rules = $positions->mapWithKeys(function ($position) use ($session) {
                     $key = 'position-'.$position['id'];
 
                     return [
-                        $key => ['required', 'array', 'size:'.$position['maxCount']],
+                        $key => ['required', 'array', 'size:'.$position['choose_max_count']],
                         $key.'.*' => [
                             'required',
                             'numeric',
                             'distinct',
-                            new OfficialsGroup($position['id'], $sessionId),
+                            new OfficialsGroup($position['id'], $session->id),
                         ],
                     ];
                 });

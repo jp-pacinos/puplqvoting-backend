@@ -27,6 +27,29 @@ trait VotingResource
         });
     }
 
+    private function getAvailablePositions($candidates)
+    {
+        return Cache::remember(
+            'VotingController\getAvailablePositions()',
+            config('cache.stored-expiry'),
+            function () use ($candidates) {
+                return Position::select(['id', 'name', 'order', 'choose_max_count'])
+                    ->whereIn('id', $candidates->pluck('position_id')->unique())
+                    ->orderBy('order', 'asc')
+                    ->get()
+                    ->map(function ($position) {
+                        return [
+                            'id' => $position['id'],
+                            'name' => $position['name'],
+                            'order' => $position['order'],
+                            'choose_max_count' => $position['choose_max_count'],
+                            'keyName' => 'position-'.$position['id'],
+                        ];
+                    });
+            }
+        );
+    }
+
     private function getParties(Party $party, $sessionId)
     {
         return Cache::remember('VotingController\getParties()', config('cache.stored-expiry'), function () use ($party, $sessionId) {
