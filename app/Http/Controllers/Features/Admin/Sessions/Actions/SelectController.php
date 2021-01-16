@@ -34,7 +34,11 @@ class SelectController extends Controller
 
     public function destroy(Session $session)
     {
-        $session->update(['active' => 0]);
+        $session->update([
+            'active' => 0,
+            'started_at' => null,
+            'registration_at' => null,
+        ]);
 
         return \response()->json([
             'message' => 'Election unselected.',
