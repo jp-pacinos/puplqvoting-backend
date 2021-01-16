@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Features\Admin\Parties;
 
 use App\Models\Party;
+use App\Models\Session;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -53,13 +54,17 @@ class PartyController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Party $party)
+    public function store(Request $request, Party $party, Session $session)
     {
         $data = $request->validate([
             'name' => 'required|string|min:4|max:255',
             'description' => 'nullable|string',
             'session_id' => 'required|exists:sessions,id',
         ]);
+
+        if ($session->find($data['session_id'])->isEnded()) {
+            abort(403, 'You cannot add a party is this election because it is already finished.');
+        }
 
         $newParty = $party->create($data);
 
@@ -89,13 +94,23 @@ class PartyController extends Controller
      * @param  \App\Models\Party  $party
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Party $party)
+    public function update(Request $request, Party $party, Session $session)
     {
         $data = $request->validate([
             'name' => 'required|string|min:4|max:255',
             'description' => 'nullable|string',
             'session_id' => 'required|exists:sessions,id',
         ]);
+
+        $isTransferring = $request->session_id != $party->session_id;
+
+        if ($isTransferring && $party->session->isEnded()) {
+            abort(403, 'You cannot transfer this party if the election is finished.');
+        }
+
+        if ($isTransferring && $session->find($request->session_id)->isEnded()) {
+            abort(403, 'You cannot transfer this party to that election. It is already finished.');
+        }
 
         $status = $party->update($data);
 
@@ -114,6 +129,10 @@ class PartyController extends Controller
      */
     public function destroy(Party $party)
     {
+        if ($party->session->isEnded()) {
+            abort(403, 'You cannot remove this party. The election is finished.');
+        }
+
         $status = $party->delete();
 
         return response()->json([
