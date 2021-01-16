@@ -99,21 +99,13 @@ Route::prefix('r')->middleware(['auth:sanctum', 'sanctum.token:user:admin'])->gr
         Route::get('/stream', [ElectionStreamStats::class, 'index']);
     });
 
-    // election settins
+    // election settings
     Route::get('sessions/{session}/settings', [ElectionSettingsController::class, 'index']);
     Route::prefix('sessions/{session}/settings')->middleware('cache.flush')->group(function () {
-        /**
-         * maintenance
-         */
         Route::post('/details', [ElectionSettingsController::class, 'update']);
         Route::post('/finished', [ElectionFinishedController::class, 'store']);
         Route::post('/registration', [ElectionRegistrationController::class, 'store']);
         Route::post('/verification-type', [ElectionVerificationTypeController::class, 'store']);
-    });
-
-    // election reports
-    Route::prefix('sessions/{session}/reports')->group(function () {
-        // Route::get('/votes', [ElectionVoteResultsReport::class, 'index']);
     });
 
     // election actions
