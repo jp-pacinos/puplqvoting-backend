@@ -51,6 +51,11 @@ class Session extends Model
         return $this->hasMany('App\Models\StudentVoteHistory');
     }
 
+    public function studentKeys()
+    {
+        return $this->hasMany('App\Models\StudentVoteKey');
+    }
+
     public function getActive()
     {
         return $this->where(['active' => 1])->first();
