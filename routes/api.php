@@ -19,9 +19,12 @@ use App\Http\Controllers\Auth\Admin\LoginController as AdminLoginController;
 use App\Http\Controllers\Features\Student\Voting\StudentCodeSubmitController;
 use App\Http\Controllers\Auth\Student\LoginController as StudentLoginController;
 use App\Http\Controllers\Features\Admin\Sessions\Stats\StreamStats as ElectionStreamStats;
+use App\Http\Controllers\Features\Admin\Sessions\Keys\KeysController as ElectionKeysController;
 use App\Http\Controllers\Features\Admin\Sessions\ElectionController as SessionElectionController;
 use App\Http\Controllers\Features\Admin\Sessions\Stats\StudentVoteStats as ElectionStudentVoteStats;
 use App\Http\Controllers\Features\Admin\Sessions\Actions\SelectController as ElectionSelectController;
+use App\Http\Controllers\Features\Admin\Sessions\Keys\KeysGroupController as ElectionKeysGroupController;
+use App\Http\Controllers\Features\Admin\Sessions\Keys\KeysExportController as ElectionKeysExportController;
 use App\Http\Controllers\Features\Admin\Sessions\Settings\FinishedController as ElectionFinishedController;
 use App\Http\Controllers\Features\Admin\Sessions\Settings\SettingsController as ElectionSettingsController;
 use App\Http\Controllers\Features\Admin\Sessions\Actions\StartElectionController as ElectionStartController;
@@ -97,6 +100,19 @@ Route::prefix('r')->middleware(['auth:sanctum', 'sanctum.token:user:admin'])->gr
 
         // new stats every n secs
         Route::get('/stream', [ElectionStreamStats::class, 'index']);
+    });
+
+    // election keys for code validation
+    Route::apiResource('sessions/{session}/studentKeys', ElectionKeysController::class)
+        ->scoped(['studentKeys'])
+        ->only(['index', 'store', 'destroy']);
+
+    Route::prefix('sessions/{session}/studentKeys')->group(function () {
+        // group actions
+        Route::post('group/update', [ElectionKeysGroupController::class, 'update']);
+        Route::post('group/delete', [ElectionKeysGroupController::class, 'destroy']);
+        // report
+        Route::get('reports/keys', [ElectionKeysExportController::class, 'index']);
     });
 
     // election settings
