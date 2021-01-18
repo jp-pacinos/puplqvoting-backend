@@ -1,0 +1,4 @@
+{
+    "intelephense.environment.phpVersion": "7.4.0",
+    "intelephense.environment.documentRoot": "public/index.php"
+}

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Features\Admin\Sessions\Keys;
 
 use App\Models\Session;
 use Illuminate\Http\Request;
-use App\Models\StudentVoteKey;
 use App\Services\CodeGenerator;
 use App\Http\Controllers\Controller;
 
@@ -19,38 +18,47 @@ class KeysGroupController extends Controller
 
         $studentIds = $validated['studentIds'];
 
-        /**
-         * if the election have registration and the count of students with no confirmation_key
-         * not matched to count of $request->studentIds, then abort
-         * It insure that we are giving new keys
-         */
-        $studentsCount = 0;
-
         if ($session->haveRegistration()) {
             $studentsCount = $session->registrations()
                 ->whereIn('student_id', $studentIds)
-                ->whereNull('confirmation_code')
                 ->count();
-        } else {
-            $studentsCount = StudentVoteKey::where('session_id', '=', $session->id)
-                ->whereIn('student_id', $studentIds)
-                ->whereNull('confirmation_code')
-                ->count();
+
+            if ($studentsCount != \count($studentIds)) {
+                return \abort(403, 'Cannot create key. These students must be registered in this election.');
+            }
         }
 
-        if ($studentsCount != \count($studentIds)) {
-            return \abort(403, 'Cannot create key. The student must be registered in this election.');
+        $studentKeys = $session->studentKeys()->whereIn('student_id', $studentIds)
+            ->whereNotNull('confirmation_code')
+            ->get();
+
+        $deniedIds = $studentKeys->pluck('student_id')->flip();
+
+        $newkeys = [];
+        $newStudentIds = [];
+        foreach ($studentIds as $id) {
+            if (\is_numeric($deniedIds[$id] ?? null)) {
+                continue;
+            }
+
+            $newkeys[] = [
+                'student_id' => $id,
+                'session_id' => $session->id,
+                'confirmation_code' => CodeGenerator::make(),
+                'created_at' => \now(),
+                'updated_at' => \now(),
+            ];
+
+            $newStudentIds[] = $id;
         }
 
-        $studentKeys = StudentVoteKey::createMany(
-            \collect($studentIds)->map(function ($id) use ($session) {
-                return [
-                    'session_id' => $session->id,
-                    'student_id' => $id,
-                    'confirmation_key' => CodeGenerator::make(),
-                ];
-            })
-        );
+        if (\count($newkeys) != 0) {
+            $session->studentKeys()->insert($newkeys);
+            $studentKeys = [
+                ...$studentKeys,
+                ...$session->studentKeys()->whereIn('student_id', $newStudentIds)->get(),
+            ];
+        }
 
         return response()->json([
             'message' => 'Keys generated',
