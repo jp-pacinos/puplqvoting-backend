@@ -18,13 +18,13 @@ trait HasStudentCode
      */
     private function getStudentCode($studentId, $sessionId)
     {
-        $studentKey = StudentVoteKey::firstOrCreate([
+        $studentKey = StudentVoteKey::firstOrNew([
             'session_id' => $sessionId,
             'student_id' => $studentId,
         ]);
 
         if (! $studentKey->confirmation_code) {
-            $studentKey->confirmation_code = CodeGenerator::make(7);
+            $studentKey->confirmation_code = CodeGenerator::make();
             $studentKey->save();
         }
 
