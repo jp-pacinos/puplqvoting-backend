@@ -26,6 +26,8 @@ class KeysController extends Controller
             'code' => 'nullable|numeric',  // 1 = have code | 2 = have no code | null = all
         ]);
 
+        $parameters['voter'] = 1;
+
         $perPage = $parameters['perpage'] ?? 10;
         $perPage = ($perPage >= 10 && $perPage <= 500) ? $perPage : 10;
 
