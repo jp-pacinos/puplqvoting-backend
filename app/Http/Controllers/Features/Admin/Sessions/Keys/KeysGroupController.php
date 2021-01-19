@@ -28,37 +28,32 @@ class KeysGroupController extends Controller
             }
         }
 
-        $studentKeys = $session->studentKeys()->whereIn('student_id', $studentIds)
-            ->whereNotNull('confirmation_code')
-            ->get();
+        $studentKeys = $session->studentKeys()->whereIn('student_id', $studentIds)->get();
+        if ($studentKeys->count() > 0) {
+            $studentKeys = $studentKeys->map(fn($student) => [
+                'id' => $student->id,
+                'student_id' => $student->student_id,
+                'session_id' => $session->id,
+                'confirmation_code' => $student->confirmation_code ?? CodeGenerator::make(),
+            ]);
+        }
 
-        $deniedIds = $studentKeys->pluck('student_id')->flip();
-
-        $newkeys = [];
-        $newStudentIds = [];
+        $deniedIds = $studentKeys->count() > 0 ? $studentKeys->pluck('student_id')->flip() : [];
         foreach ($studentIds as $id) {
             if (\is_numeric($deniedIds[$id] ?? null)) {
                 continue;
             }
 
-            $newkeys[] = [
+            $studentKeys->push([
+                'id' => null,
                 'student_id' => $id,
                 'session_id' => $session->id,
                 'confirmation_code' => CodeGenerator::make(),
-                'created_at' => \now(),
-                'updated_at' => \now(),
-            ];
-
-            $newStudentIds[] = $id;
+            ]);
         }
 
-        if (\count($newkeys) != 0) {
-            $session->studentKeys()->insert($newkeys);
-            $studentKeys = [
-                ...$studentKeys,
-                ...$session->studentKeys()->whereIn('student_id', $newStudentIds)->get(),
-            ];
-        }
+        $session->studentKeys()->upsert($studentKeys->toArray(), ['id', 'student_id', 'session_id'], ['confirmation_code']);
+        $studentKeys = $session->studentKeys()->whereIn('student_id', $studentIds)->get();
 
         return response()->json([
             'message' => 'Keys generated',
