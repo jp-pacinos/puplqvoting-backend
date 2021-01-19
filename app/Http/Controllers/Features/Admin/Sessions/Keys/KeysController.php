@@ -44,7 +44,7 @@ class KeysController extends Controller
                 return $q->whereNull('student_vote_keys.confirmation_code');
             })
             ->select([
-                'student_vote_keys.id', 'student_vote_keys.confirmation_code',
+                'student_vote_keys.id', 'user_students.id as student_id', 'student_vote_keys.confirmation_code',
                 'student_number', 'firstname', 'lastname', 'middlename', 'suffix',
                 'sex', 'can_vote', 'course_id',
             ]);
@@ -67,12 +67,12 @@ class KeysController extends Controller
         if ($session->haveRegistration()) {
             $count = $session->registrations()->where(['student_id' => $request->studentid])->count();
             if ($count == 0) {
-                return \abort(403, 'Cannot create key. The student must be registered in this election.');
+                return \abort(403, 'Cannot create code. The student must be registered in this election.');
             }
         }
 
         return response()->json([
-            'message' => 'Key generated',
+            'message' => 'Code generated',
             'data' => $this->getStudentCode($request->studentid, $session->id),
         ], 201);
     }
@@ -81,6 +81,6 @@ class KeysController extends Controller
     {
         $result = $studentKey->delete();
 
-        return response()->json(['message' => 'Key deleted', 'success' => $result]);
+        return response()->json(['message' => 'Code deleted', 'success' => $result]);
     }
 }
