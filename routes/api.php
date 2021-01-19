@@ -110,7 +110,7 @@ Route::prefix('r')->middleware(['auth:sanctum', 'sanctum.token:user:admin'])->gr
     Route::prefix('sessions/{session}/studentKeys')->group(function () {
         // group actions
         Route::post('group/update', [ElectionKeysGroupController::class, 'update']);
-        Route::post('group/delete', [ElectionKeysGroupController::class, 'destroy']);
+        Route::delete('group/delete', [ElectionKeysGroupController::class, 'destroy']);
         // report
         Route::get('reports/keys', [ElectionKeysExportController::class, 'index']);
     });
