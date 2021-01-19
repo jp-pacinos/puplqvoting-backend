@@ -68,7 +68,9 @@ class KeysGroupController extends Controller
             'studentIds.*' => 'required|numeric', // don't check every id, creates n+1
         ]);
 
-        $affectedRows = $session->studentKeys()->whereIn('student_id', $validated['studentIds'])->delete();
+        $affectedRows = $session->studentKeys()->whereIn('student_id', $validated['studentIds'])->update([
+            'confirmation_code' => null,
+        ]);
 
         return response()->json([
             'message' => 'Keys deleted',
