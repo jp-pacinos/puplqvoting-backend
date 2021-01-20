@@ -14,7 +14,7 @@ class KeysController extends Controller
 {
     use HasStudentCode;
 
-    public function index(Request $request, Session $session, UserStudent $userStudent, StudentVoteKey $studentVoteKey, StudentsFilter $filter)
+    public function index(Request $request, Session $session, UserStudent $userStudent, StudentsFilter $filter)
     {
         $parameters = $request->validate([
             'perpage' => 'nullable|numeric',
