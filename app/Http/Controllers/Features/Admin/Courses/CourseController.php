@@ -32,9 +32,12 @@ class CourseController extends Controller
             'acronym' => 'required|string|max:60|unique:courses',
         ]);
 
-        $course->create($newCourse);
+        $newCourse = $course->create($newCourse);
 
-        return response()->json(['message' => 'course-created'], 201);
+        return response()->json([
+            'message' => 'Course created',
+            'course' => $newCourse,
+        ], 201);
     }
 
     /**
@@ -62,9 +65,9 @@ class CourseController extends Controller
             'acronym' => ['required', 'string', 'max:60', Rule::unique('courses')->ignore($course->id)],
         ]);
 
-        $course->update($newCourse);
+        $updated = $course->update($newCourse);
 
-        return response()->json(['message' => 'course-updated']);
+        return response()->json(['message' => 'Course updated', 'course' => $updated]);
     }
 
     /**
@@ -75,8 +78,12 @@ class CourseController extends Controller
      */
     public function destroy(Course $course)
     {
-        $course->delete();
+        if ($course->students()->count() > 0) {
+            \abort(403, 'Please update or remove the students with this course.');
+        }
 
-        return response()->json(['message' => 'course-deleted']);
+        $status = $course->delete();
+
+        return response()->json(['message' => 'Course deleted', 'success' => $status]);
     }
 }
