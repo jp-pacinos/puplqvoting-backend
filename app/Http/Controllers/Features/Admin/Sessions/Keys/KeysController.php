@@ -14,7 +14,7 @@ class KeysController extends Controller
 {
     use HasStudentCode;
 
-    public function index(Request $request, Session $session, UserStudent $userStudent, StudentsFilter $filter)
+    public function index(Request $request, Session $session, UserStudent $userStudent, StudentVoteKey $studentVoteKey, StudentsFilter $filter)
     {
         $parameters = $request->validate([
             'perpage' => 'nullable|numeric',
@@ -32,19 +32,22 @@ class KeysController extends Controller
         $perPage = ($perPage >= 10 && $perPage <= 500) ? $perPage : 10;
 
         $query = $userStudent
-            ->leftJoin('student_vote_keys', 'student_vote_keys.student_id', '=', 'user_students.id')
-            ->where('student_vote_keys.session_id', '=', $session->id)
-            ->when($session->haveRegistration(), function ($q) {
-                return $q->join('registrations', 'registrations.student_id', '=', 'user_students.id');
-            })
+            ->leftJoinSub(
+                $session->studentKeys()->getQuery(),
+                'student_vote_keys',
+                fn($join) => $join->on('student_vote_keys.student_id', '=', 'user_students.id')
+            )
             ->when($parameters['code'] ?? null, function ($q) use ($parameters) {
                 if ($parameters['code'] == 1) {
                     return $q->whereNotNull('student_vote_keys.confirmation_code');
                 }
                 return $q->whereNull('student_vote_keys.confirmation_code');
             })
+            ->when($session->haveRegistration(), function ($q) use ($session) {
+                return $q->where('student_vote_keys.session_id', '=', $session->id);
+            })
             ->select([
-                'student_vote_keys.id', 'user_students.id as student_id', 'student_vote_keys.confirmation_code',
+                'user_students.id', 'student_vote_keys.confirmation_code',
                 'student_number', 'firstname', 'lastname', 'middlename', 'suffix',
                 'sex', 'can_vote', 'course_id',
             ]);
