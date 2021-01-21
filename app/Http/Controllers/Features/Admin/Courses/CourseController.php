@@ -14,9 +14,18 @@ class CourseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Course $course)
+    public function index(Request $request, Course $course)
     {
-        return response()->json($course->orderBy('name')->get());
+        $parameters = $request->validate([
+            's' => 'nullable|string',
+        ]);
+
+        return response()->json(
+            $course
+                ->when($parameters['s'] ?? null, fn($q) => $q->where('name', 'LIKE', '%'.$parameters['s'].'%'))
+                ->orderBy('name')
+                ->get()
+        );
     }
 
     /**
@@ -65,9 +74,9 @@ class CourseController extends Controller
             'acronym' => ['required', 'string', 'max:60', Rule::unique('courses')->ignore($course->id)],
         ]);
 
-        $updated = $course->update($newCourse);
+        $course->update($newCourse);
 
-        return response()->json(['message' => 'Course updated', 'course' => $updated]);
+        return response()->json(['message' => 'Course updated', 'course' => $course]);
     }
 
     /**
@@ -79,7 +88,7 @@ class CourseController extends Controller
     public function destroy(Course $course)
     {
         if ($course->students()->count() > 0) {
-            \abort(403, 'Please update or remove the students with this course.');
+            \abort(403, 'Please update or remove the students related to this course.');
         }
 
         $status = $course->delete();
