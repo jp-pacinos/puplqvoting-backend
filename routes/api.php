@@ -52,6 +52,7 @@ Route::prefix('auth/login')->group(function () {
      * login
      */
     Route::post('/admin', [AdminLoginController::class, 'index']);
+    Route::patch('/admin/{user}', [AdminLoginController::class, 'update']);
     Route::post('/student', [StudentLoginController::class, 'index'])->middleware('voting.open');
 });
 
