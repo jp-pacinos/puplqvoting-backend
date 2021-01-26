@@ -39,7 +39,10 @@ class LoginController extends Controller
         // can vote but not registered if have registration
         if ($session->haveRegistration()) {
             if (! $student->isRegistered($session->id)) {
-                abort(403, 'You\'re not registered in this election.');
+                return \response()->json([
+                    'message' => 'You\'re not registered in this election.',
+                    'registration_url' => route('student.registration'),
+                ], 403);
             }
         }
 
