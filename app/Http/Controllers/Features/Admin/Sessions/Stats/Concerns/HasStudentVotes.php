@@ -51,7 +51,7 @@ trait HasStudentVotes
 
         return DB::query()->select([
             'officials.*',
-            DB::raw('COUNT(`student_votes`.`id`) AS `votes`'),
+            DB::raw('COUNT(student_votes.id) AS votes'),
         ])
             ->fromSub(function ($query) use ($detailed) {
                 $query
@@ -94,7 +94,18 @@ trait HasStudentVotes
             ->when($options['gender'] ?? null, function ($query) use ($options) {
                 return $query->where('student_votes.sex', '=', $options['gender']);
             })
-            ->groupBy('officials.id')
+            ->groupBy(
+                'officials.id',
+                'officials.position_id',
+                'officials.student_id',
+                'officials.party_id'
+            )
+            ->when($detailed, fn($q) => $q->groupBy(
+                'officials.lastname',
+                'officials.firstname',
+                'officials.middlename',
+                'officials.suffix'
+            ))
             ->when($options['sortByVotes'] ?? null, function ($query) use ($options) {
                 return $query->orderBy('votes', $options['sortByVotes'] == 'desc' ? 'desc' : 'asc');
             }, function ($query) {
