@@ -6,6 +6,6 @@ class HomeController
 {
     public function index()
     {
-        return 'admin home';
+        return config('spa.admin') ? redirect(config('spa.admin')) : \response('', 204);
     }
 }

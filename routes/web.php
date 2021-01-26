@@ -36,7 +36,7 @@ Route::prefix('vote')->name('vote.')->group(function () {
 Route::prefix('pupadmin')->group(function () {
     Route::get('/reports/election/{session}', [ElectionResultsController::class, 'index'])->name('reports.election');
 
-    Route::get('/{view?}', [AdminHomeController::class, 'index'])->where('view', '^((?!api).)*');
+    Route::get('/{view?}', [AdminHomeController::class, 'index'])->where('view', '^((?!api).)*')->name('admin.index');
 });
 
 /**
@@ -51,4 +51,4 @@ Route::middleware('registration.open')->group(function () {
 Route::get('/registration/code/{code}', [StudentRegistrationShowCodeController::class, 'index'])
     ->name('student.registration.code');
 
-Route::get('/{view?}', [StudentHomeController::class, 'index'])->where('view', '^((?!api).)*');
+Route::get('/{view?}', [StudentHomeController::class, 'index'])->where('view', '^((?!api).)*')->name('student.index');

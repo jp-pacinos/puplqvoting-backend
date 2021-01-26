@@ -51,5 +51,5 @@
 
 <div style="margin: 2.5em 0"></div>
 
-<a href="/" class="btn btn-lg btn-primary" rel="prefetch">Go to Election Page</a>
+<a href={{ route('student.index') }} class="btn btn-lg btn-primary" rel="prefetch">Go to Election Page</a>
 @endsection

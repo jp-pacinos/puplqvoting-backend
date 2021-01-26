@@ -11,7 +11,13 @@
 -   `php artisan migrate:fresh --seed` we make sure this is the first time
 -   `php artisan serve` to start the app
 
+### Queue work
+
+-   `php artisan queue:work`
+
 ### Routes
+
+See .env `SPA_STUDENT_URL` `SPA_ADMIN_URL`
 
 -   `/`
 -   `/pupadmin`

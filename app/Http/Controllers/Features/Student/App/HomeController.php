@@ -6,13 +6,8 @@ use App\Http\Controllers\Controller;
 
 class HomeController extends Controller
 {
-    /**
-     * Undocumented function
-     *
-     * @return void
-     */
     public function index()
     {
-        return view('student.index');
+        return config('spa.student') ? redirect(config('spa.student')) : \response('', 204);
     }
 }
