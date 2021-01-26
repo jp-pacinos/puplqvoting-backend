@@ -34,7 +34,7 @@ class FakeDataSeeder extends Seeder
         });
 
         $this->courseSeeder(10);
-        $this->studentSeeder(250);
+        $this->studentSeeder(300);
 
         $this->partySeeder();
         $this->officialSeeder();
