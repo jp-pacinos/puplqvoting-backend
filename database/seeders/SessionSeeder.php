@@ -18,58 +18,60 @@ class SessionSeeder extends Seeder
         $faker = \Faker\Factory::create();
 
         $thisYear = now()->year;
-        $fromYear = $thisYear - 12;
+        $fromYear = ($thisYear - 7);
 
         for ($i = $fromYear; $i < $thisYear; $i++) {
-            if ($i == 2020 || $i === 2019 || $i == 2018) {
+            if ($i == ($thisYear - 1) || $i === ($thisYear - 2) || $i == ($thisYear - 3)) {
                 continue;
             }
+
+            $isCompleted = \rand(0, 100) >= 22 ? now() : null;
 
             Session::create([
                 'name' => 'Election '.$i,
                 'year' => $i,
                 'active' => false,
                 'description' => \rand(0, 100) > 60 ? $faker->text : null,
-                'registration' => \rand(0, 100) > 40 ? true : false,
+                'registration' => false,
                 'verification_type' => $this->randomVerificationType(),
-                'cancelled_at' => \rand(0, 100) <= 5 ? now() : null,
-                'completed_at' => \rand(0, 100) >= 10 ? now() : null,
+                'cancelled_at' => $isCompleted ? null : now(),
+                'completed_at' => $isCompleted ? now() : null,
             ]);
         }
 
         Session::create([
-            'name' => 'Covid Season',
-            'year' => 2020,
+            'name' => 'Election '.($thisYear - 1),
+            'year' => ($thisYear - 1),
             'active' => true,
             'registration' => true,
+            'verification_type' => 'code',
+        ]);
+
+        Session::create([
+            'name' => 'Election '.($thisYear - 2),
+            'year' => ($thisYear - 2),
+            'description' => $faker->text,
+            'active' => false,
+            'registration' => false,
+            'verification_type' => 'code',
+            'registration_at' => Carbon::now(),
+            'completed_at' => Carbon::now(),
+        ]);
+
+        Session::create([
+            'name' => 'Election '.($thisYear - 3),
+            'year' => ($thisYear - 3),
+            'description' => $faker->text,
+            'active' => false,
+            'registration' => false,
             'verification_type' => 'email',
-        ]);
-
-        Session::create([
-            'name' => 'Happy Unknown',
-            'year' => 2019,
-            'description' => $faker->text,
-            'active' => false,
-            'registration' => true,
-            'verification_type' => 'code',
             'registration_at' => Carbon::now(),
             'completed_at' => Carbon::now(),
         ]);
 
         Session::create([
-            'name' => 'Election 2018',
-            'year' => 2018,
-            'description' => $faker->text,
-            'active' => false,
-            'registration' => true,
-            'verification_type' => 'code',
-            'registration_at' => Carbon::now(),
-            'completed_at' => Carbon::now(),
-        ]);
-
-        Session::create([
-            'name' => 'Election 2018',
-            'year' => 2018,
+            'name' => 'Election '.($thisYear - 3),
+            'year' => ($thisYear - 3),
             'description' => $faker->text,
             'active' => false,
             'registration' => false,

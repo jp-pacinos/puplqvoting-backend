@@ -39,7 +39,7 @@ class UserStudentFactory extends Factory
             'middlename' => $haveMiddlename ? $this->faker->lastname : null,
             'email' => $this->faker->unique()->safeEmail,
             'suffix' => $haveSuffix ? $this->faker->suffix : null,
-            'sex' => $sex,
+            'sex' => \strtoupper($sex),
             'birthdate' => $this->faker->date(),
             'can_vote' => true,
             'course_id' => Course::inRandomOrder()->first()['id'],

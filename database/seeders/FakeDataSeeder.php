@@ -33,8 +33,8 @@ class FakeDataSeeder extends Seeder
             return [$position->id => $position->per_party_count];
         });
 
-        $this->courseSeeder();
-        $this->studentSeeder();
+        $this->courseSeeder(10);
+        $this->studentSeeder(2500);
 
         $this->partySeeder();
         $this->officialSeeder();
@@ -47,22 +47,22 @@ class FakeDataSeeder extends Seeder
         $this->call(SessionSeeder::class);
     }
 
-    public function courseSeeder()
+    public function courseSeeder($count)
     {
-        $courses = Course::factory()->count(18)->make();
+        $courses = Course::factory()->count($count)->make();
         Course::insertOrIgnore($courses->toArray());
     }
 
-    public function studentSeeder()
+    public function studentSeeder($count)
     {
-        echo 'Creating 2500+ students, this may take a while...'."\n";
-        $students = UserStudent::factory()->count(2800)->make();
+        echo 'Creating '.$count.'+ students, this may take a while...'."\n";
+        $students = UserStudent::factory()->count($count)->make();
 
         UserStudent::insertOrIgnore($students->toArray());
 
         // we can't set the timestamps in the factory
         // manually updating the timestamps fix the problem
-        UserStudent::chunkById(500, function ($students) {
+        UserStudent::chunkById(250, function ($students) {
             foreach ($students as $student) {
                 $student->update([
                     'created_at' => Carbon::now(),
@@ -123,9 +123,9 @@ class FakeDataSeeder extends Seeder
         return $id;
     }
 
-    public function simulateElections()
+    public function simulateElections($count = false)
     {
-        $sessions = Session::all();
+        $sessions = Session::orderBy('year', 'desc')->when(\is_numeric($count), fn($q) => $q->limit($count))->get();
 
         foreach ($sessions as $session) {
             $this->makeElection($session);
