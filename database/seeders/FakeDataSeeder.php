@@ -34,12 +34,12 @@ class FakeDataSeeder extends Seeder
         });
 
         $this->courseSeeder(10);
-        $this->studentSeeder(2500);
+        $this->studentSeeder(250);
 
         $this->partySeeder();
         $this->officialSeeder();
 
-        $this->simulateElections();
+        $this->simulateElections(1);
     }
 
     public function sessionSeeder()
