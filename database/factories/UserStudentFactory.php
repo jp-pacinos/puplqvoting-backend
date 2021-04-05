@@ -31,9 +31,11 @@ class UserStudentFactory extends Factory
             . '-' . \str_pad(rand(0, 99999), 5, '0', \STR_PAD_LEFT)
             . '-LQ-0';
 
+        $lastname = config('app.env') == 'testing' ? $this->faker->lastName . 'Testing' : $this->faker->lastName;
+
         return [
             'student_number' => $id,
-            'lastname' => $this->faker->lastName,
+            'lastname' => $lastname,
             'firstname' => $this->faker->firstName($sex),
             'middlename' => $haveMiddlename ? $this->faker->lastName : null,
             'email' => $this->faker->unique()->safeEmail,
