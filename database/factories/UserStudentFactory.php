@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\Course;
 use App\Models\UserStudent;
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UserStudentFactory extends Factory
@@ -29,22 +28,30 @@ class UserStudentFactory extends Factory
 
         // e.g. YYYY-00536-LQ-0
         $id = \rand(\date('Y') - 7, \date('Y'))
-        .'-'.\str_pad(rand(0, 99999), 5, '0', \STR_PAD_LEFT)
-            .'-LQ-0';
+            . '-' . \str_pad(rand(0, 99999), 5, '0', \STR_PAD_LEFT)
+            . '-LQ-0';
 
         return [
             'student_number' => $id,
-            'lastname' => $this->faker->lastname,
+            'lastname' => $this->faker->lastName,
             'firstname' => $this->faker->firstName($sex),
-            'middlename' => $haveMiddlename ? $this->faker->lastname : null,
+            'middlename' => $haveMiddlename ? $this->faker->lastName : null,
             'email' => $this->faker->unique()->safeEmail,
             'suffix' => $haveSuffix ? $this->faker->suffix : null,
             'sex' => \strtoupper($sex),
             'birthdate' => $this->faker->date(),
             'can_vote' => true,
-            'course_id' => Course::inRandomOrder()->first()['id'],
-            // 'created_at' => Carbon::now(),
-            // 'updated_at' => Carbon::now(),
+            'course_id' => Course::factory()
         ];
+    }
+
+    public function canVote()
+    {
+        return $this->state(['can_vote' => true]);
+    }
+
+    public function unableToVote()
+    {
+        return $this->state(['can_vote' => false]);
     }
 }

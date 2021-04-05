@@ -40,10 +40,12 @@ class StudentActiveSession
 
     private static function instance()
     {
-        static $session;
+        if (\config('app.env') != 'testing') {
+            static $session;
 
-        if ($session != null) {
-            return $session;
+            if ($session != null) {
+                return $session;
+            }
         }
 
         $session = Cache::get(static::$cacheKey);
