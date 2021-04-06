@@ -27,6 +27,13 @@ class Session extends Model
         'cancelled_at',
     ];
 
+    /**
+     * enum values in verification_type field
+     *
+     * @var string[]
+     */
+    public static $VERIFICATION_TYPES = ['open', 'code', 'email'];
+
     public static function booted()
     {
         static::deleting(function ($session) {
@@ -66,9 +73,14 @@ class Session extends Model
         return $this->select(['id'])->where(['active' => 1])->first()['id'];
     }
 
+    /**
+     * Determines if this session have registration.
+     *
+     * @return bool
+     */
     public function haveRegistration()
     {
-        return $this->registration != null;
+        return (bool) $this->registration == (bool) 1;
     }
 
     /**
@@ -98,6 +110,6 @@ class Session extends Model
      */
     public function isEnded()
     {
-        return ! \is_null($this->completed_at) || ! \is_null($this->cancelled_at);
+        return !\is_null($this->completed_at) || !\is_null($this->cancelled_at);
     }
 }

@@ -12,16 +12,9 @@ class VotingController extends Controller
 {
     use Concerns\VotingResource, Concerns\VoteByType, Concerns\HasVoteResult;
 
-    /**
-     * @var \App\Models\Session $session
-     */
-    protected $session;
-
     public function __construct(StudentActiveSession $session)
     {
         $this->middleware('student.canvote');
-
-        $this->session = $session->getInstance();
     }
 
     /**
@@ -29,9 +22,10 @@ class VotingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Party $party, Official $official)
+    public function index(Party $party, Official $official, StudentActiveSession $activeSession)
     {
-        $candidates = $this->getOfficials($official, $this->session->id);
+        $session = $activeSession->getInstance();
+        $candidates = $this->getOfficials($official, $session->id);
 
         // return response()->json([
         //     'positions' => $this->getPositions($position, $this->session->id),
@@ -41,28 +35,29 @@ class VotingController extends Controller
 
         return response()->json([
             'positions' => $this->getAvailablePositions($candidates),
-            'parties' => $this->getParties($party, $this->session->id),
+            'parties' => $this->getParties($party, $session->id),
             'candidates' => $candidates,
         ]);
     }
 
-    public function store(ValidOfficialsRequest $request)
+    public function store(ValidOfficialsRequest $request, StudentActiveSession $activeSession)
     {
+        $session = $activeSession->getInstance();
         $validated = $request->validated();
         $student = $request->user();
 
         $voteHistory = null;
         switch ($this->session->verification_type) {
             case 'open':
-                $voteHistory = $this->voteByOpen($student, $validated, $this->session->id);
+                $voteHistory = $this->voteByOpen($student, $validated, $session->id);
                 break;
 
             case 'code':
-                $voteHistory = $this->voteByCode($student, $validated, $this->session->id);
+                $voteHistory = $this->voteByCode($student, $validated, $session->id);
                 break;
 
             case 'email':
-                $voteHistory = $this->voteByEmail($student, $validated, $this->session->id);
+                $voteHistory = $this->voteByEmail($student, $validated, $session->id);
                 break;
         }
 
