@@ -10,9 +10,11 @@ use App\Http\Requests\ValidOfficials as ValidOfficialsRequest;
 
 class VotingController extends Controller
 {
-    use Concerns\VotingResource, Concerns\VoteByType, Concerns\HasVoteResult;
+    use Concerns\VotingResource;
+    use Concerns\VoteByType;
+    use Concerns\HasVoteResult;
 
-    public function __construct(StudentActiveSession $session)
+    public function __construct()
     {
         $this->middleware('student.canvote');
     }
