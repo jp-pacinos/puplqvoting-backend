@@ -2,7 +2,9 @@
 
 namespace Tests\Concerns;
 
+use Error;
 use App\Models\Session;
+use Illuminate\Support\Str;
 use App\Models\Registration;
 use App\Models\StudentVoteHistory;
 use App\Services\StudentActiveSession;
@@ -12,41 +14,48 @@ use App\Services\StudentActiveSession;
  */
 trait InteractsWithActiveElection
 {
-    use InteractsWithAdmin;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        (new StudentActiveSession())->clear();
-    }
-
-    protected function tearDown(): void
-    {
-        (new StudentActiveSession())->clear();
-
-        (new Session())->getActive()->delete();
-
-        parent::tearDown();
-    }
-
     /**
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
     private function electionFactory()
     {
+        (new StudentActiveSession())->clear();
+
+        $this->electionDestroy();
+
         return Session::factory()->isActive();
+    }
+
+    public function electionDestroy()
+    {
+        $session = (new Session())->getActive();
+        if (!$session) {
+            return;
+        }
+
+        $validName = $session && Str::startsWith($session->name, ['ElectionTest', 'ElectionTesting']);
+        if (!$validName) {
+            throw new Error(
+                "Session $session->name"
+                    . ' is not valid session to test. '
+                    . 'Please use "ElectionTest" or "ElectionTesting" name in your tests.'
+            );
+        }
+
+        $session->delete();
     }
 
     /**
      * @param array $students ['voted' => int[], 'registered' => int[]]
      * @param bool $hasRegistration
+     * @param bool $withCandidates
      * @return mixed
      */
-    public function electionHasStarted($students = ['voted' => [], 'registered' => []], $hasRegistration = false)
-    {
-        $this->actingAsAdmin();
-
+    public function electionHasStarted(
+        $students = ['voted' => [], 'registered' => []],
+        $hasRegistration = false,
+        $withCandidates = false
+    ) {
         $election = $this->electionFactory()
             ->state(['started_at' => now(), 'registration' => $hasRegistration])
             ->create();
@@ -72,27 +81,30 @@ trait InteractsWithActiveElection
             }
         }
 
+        if ($withCandidates) {
+            // TODO generate candidates.
+        }
+
         return $election;
     }
 
-    public function electionHasStartedWithRegistration($students = ['voted' => [], 'registered' => []])
+    public function electionHasStartedWithCandidates($students = [], $hasRegistration = false)
     {
-        $this->actingAsAdmin();
+        return $this->electionHasStarted($students, $hasRegistration, true);
+    }
 
-        return $this->electionHasStarted($students, true);
+    public function electionHasStartedWithRegistration($students = [], $withCandidates = false)
+    {
+        return $this->electionHasStarted($students, true, $withCandidates);
     }
 
     public function electionHasNotStarted()
     {
-        $this->actingAsAdmin();
-
         return $this->electionFactory()->state(['started_at' => null])->create();
     }
 
     public function electionHasEnded($type = '')
     {
-        $this->actingAsAdmin();
-
         return $this->electionFactory()->state(['started_at' => now()])->hasEnded($type)->create();
     }
 }
