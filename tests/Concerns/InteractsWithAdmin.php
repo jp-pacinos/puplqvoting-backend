@@ -5,7 +5,7 @@ namespace Tests\Concerns;
 use App\Models\UserAdmin;
 
 /**
- * @covers App\Models\Session
+ * @covers App\Models\UserAdmin
  */
 trait InteractsWithAdmin
 {
