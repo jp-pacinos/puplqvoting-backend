@@ -30,9 +30,9 @@ class VotingController extends Controller
         $candidates = $this->getOfficials($official, $session->id);
 
         // return response()->json([
-        //     'positions' => $this->getPositions($position, $this->session->id),
-        //     'parties' => $this->getParties($party, $this->session->id),
-        //     'candidates' => $this->getOfficials($official, $this->session->id),
+        //     'positions' => $this->getPositions($position, $session->id),
+        //     'parties' => $this->getParties($party, $session->id),
+        //     'candidates' => $this->getOfficials($official, $session->id),
         // ]);
 
         return response()->json([
@@ -49,7 +49,7 @@ class VotingController extends Controller
         $student = $request->user();
 
         $voteHistory = null;
-        switch ($this->session->verification_type) {
+        switch ($session->verification_type) {
             case 'open':
                 $voteHistory = $this->voteByOpen($student, $validated, $session->id);
                 break;
@@ -66,7 +66,7 @@ class VotingController extends Controller
         $data = [
             'message' => 'Created successfully',
             'history_id' => $voteHistory->id,
-            'verification_type' => $this->session->verification_type,
+            'verification_type' => $session->verification_type,
             'resultLink' => $this->getVoteResultLink($voteHistory->id),
         ];
 
