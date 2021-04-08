@@ -43,7 +43,7 @@ class UserStudentFactory extends Factory
             'sex' => \strtoupper($sex),
             'birthdate' => $this->faker->date(),
             'can_vote' => true,
-            'course_id' => Course::factory()
+            'course_id' => config('app.env') == 'testing' ? Course::factory() : Course::inRandomOrder()->first()->id
         ];
     }
 

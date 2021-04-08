@@ -3,9 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\Course;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CourseFactory extends Factory
 {
@@ -46,14 +45,12 @@ class CourseFactory extends Factory
                 }
             }
         } else {
-            $acronym .= $jobTitle[0].$jobTitle[1];
+            $acronym .= $jobTitle[0] . $jobTitle[1];
         }
 
-        $acronym = \strtoupper($acronym);
-
         return [
-            'name' => $degreeAcronym[0].$jobTitle,
-            'acronym' => $acronym,
+            'name' => $degreeAcronym[0] . $jobTitle,
+            'acronym' => \strtoupper($acronym) . $this->faker->randomNumber(3),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ];
