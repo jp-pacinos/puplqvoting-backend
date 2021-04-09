@@ -12,7 +12,7 @@ class VoteEmailVerification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    protected $voteHistoryId;
+    public $voteHistoryId;
 
     /**
      * Create a new notification instance.
@@ -51,7 +51,7 @@ class VoteEmailVerification extends Notification implements ShouldQueue
         );
 
         return (new MailMessage)
-            ->greeting('Hello '.$notifiable->firstname.'!')
+            ->greeting('Hello ' . $notifiable->firstname . '!')
             ->line('You have received this message to verify your vote.')
             ->line('If you are unaware that you made this, please simply ingnore this message.')
             ->action('Verify my vote', $url)

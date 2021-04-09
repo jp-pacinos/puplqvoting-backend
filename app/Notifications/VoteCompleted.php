@@ -3,15 +3,15 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Notification;
 
 class VoteCompleted extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    protected $resultUrl;
+    public $resultUrl;
 
     /**
      * Create a new notification instance.
@@ -43,11 +43,11 @@ class VoteCompleted extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->greeting('Hello again '.$notifiable->firstname.'!')
-                    ->line('First of all thank you for voting, in case you missed to download your voting results you can download it here.')
-                    ->line('Please be aware that the link will expire within this day.')
-                    ->action('Download Vote Result', $this->resultUrl)
-                    ->line('Thank you for using our application!');
+            ->greeting('Hello again ' . $notifiable->firstname . '!')
+            ->line('First of all thank you for voting, in case you missed to download your voting results you can download it here.')
+            ->line('Please be aware that the link will expire within this day.')
+            ->action('Download Vote Result', $this->resultUrl)
+            ->line('Thank you for using our application!');
     }
 
     /**
