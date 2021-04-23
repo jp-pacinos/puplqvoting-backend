@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AppRestoreController;
 use App\Http\Controllers\Features\Admin\App\SelectController;
 use App\Http\Controllers\Features\Admin\Parties\PartyController;
 use App\Http\Controllers\Features\Admin\Courses\CourseController;
@@ -162,3 +163,9 @@ Route::prefix('selects')->middleware(['auth:sanctum', 'sanctum.token:user:admin'
      */
     Route::get('/', [SelectController::class, 'index']);
 });
+
+/**
+ * App Restore
+ */
+Route::get('/app/restore', AppRestoreController::class, 'index')
+    ->middleware(['auth:sanctum', 'sanctum.token:user:admin']);
