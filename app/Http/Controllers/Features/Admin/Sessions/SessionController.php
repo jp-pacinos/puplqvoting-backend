@@ -49,6 +49,12 @@ class SessionController extends Controller
             'description' => 'nullable|string',
         ]);
 
+        if ($request->verification_type == 'email') {
+            return response()->json([
+                'message' => 'Email verification is prevented in demo. Please use different verification type.'
+            ], 403);
+        }
+
         $newSession = $session->create($data);
 
         return response()->json([

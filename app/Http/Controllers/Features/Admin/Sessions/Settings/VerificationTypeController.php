@@ -12,6 +12,12 @@ class VerificationTypeController extends Controller
     {
         $request->validate(['type' => 'required|in:open,code,email']);
 
+        if ($request->type == 'email') {
+            return \response()->json([
+                'message' => 'Email verification is prevented in demo. Please use different verification type.'
+            ], 403);
+        }
+
         $session->update(['verification_type' => $request->type]);
 
         return \response()->json([
