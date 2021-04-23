@@ -167,5 +167,5 @@ Route::prefix('selects')->middleware(['auth:sanctum', 'sanctum.token:user:admin'
 /**
  * App Restore
  */
-Route::get('/app/restore', AppRestoreController::class, 'index')
+Route::get('/app/restore', [AppRestoreController::class, 'index'])
     ->middleware(['auth:sanctum', 'sanctum.token:user:admin']);
