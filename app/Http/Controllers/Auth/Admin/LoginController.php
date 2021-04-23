@@ -58,8 +58,8 @@ class LoginController extends Controller
 
         $user->update([
             'name' => $data['name'],
-            'email' => $data['username'],
-            'password' => Hash::make($data['password']),
+            // 'email' => $data['username'],
+            // 'password' => Hash::make($data['password']),
         ]);
 
         return \response()->json([
