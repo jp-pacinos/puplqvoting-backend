@@ -15,10 +15,12 @@ class SessionSeeder extends Seeder
      */
     public function run()
     {
+        $seedCount = 4;
+
         $faker = \Faker\Factory::create();
 
         $thisYear = now()->year;
-        $fromYear = ($thisYear - 7);
+        $fromYear = ($thisYear - $seedCount);
 
         for ($i = $fromYear; $i < $thisYear; $i++) {
             if ($i == ($thisYear - 1) || $i === ($thisYear - 2) || $i == ($thisYear - 3)) {
@@ -28,7 +30,7 @@ class SessionSeeder extends Seeder
             $isCompleted = \rand(0, 100) >= 22 ? now() : null;
 
             Session::create([
-                'name' => 'Election '.$i,
+                'name' => 'Election ' . $i,
                 'year' => $i,
                 'active' => false,
                 'description' => \rand(0, 100) > 60 ? $faker->text : null,
@@ -40,7 +42,7 @@ class SessionSeeder extends Seeder
         }
 
         Session::create([
-            'name' => 'Election '.($thisYear - 1),
+            'name' => 'Election ' . ($thisYear - 1),
             'year' => ($thisYear - 1),
             'active' => true,
             'registration' => true,
@@ -48,7 +50,7 @@ class SessionSeeder extends Seeder
         ]);
 
         Session::create([
-            'name' => 'Election '.($thisYear - 2),
+            'name' => 'Election ' . ($thisYear - 2),
             'year' => ($thisYear - 2),
             'description' => $faker->text,
             'active' => false,
@@ -59,18 +61,18 @@ class SessionSeeder extends Seeder
         ]);
 
         Session::create([
-            'name' => 'Election '.($thisYear - 3),
+            'name' => 'Election ' . ($thisYear - 3),
             'year' => ($thisYear - 3),
             'description' => $faker->text,
             'active' => false,
             'registration' => false,
-            'verification_type' => 'email',
+            'verification_type' => 'open',
             'registration_at' => Carbon::now(),
             'completed_at' => Carbon::now(),
         ]);
 
         Session::create([
-            'name' => 'Election '.($thisYear - 3),
+            'name' => 'Election ' . ($thisYear - 3),
             'year' => ($thisYear - 3),
             'description' => $faker->text,
             'active' => false,
@@ -89,7 +91,8 @@ class SessionSeeder extends Seeder
         }
 
         if ($n >= 60) {
-            return 'email';
+            // don't use email verification in demo
+            // return 'email';
         }
 
         return 'code';
